@@ -13,15 +13,12 @@ class: text-center
 drawings:
   persist: false
 # slide transition: https://sli.dev/guide/animations.html#slide-transitions
-transition: slide-left
+# transition: slide-left
 # enable MDC Syntax: https://sli.dev/features/mdc
 mdc: true
 ---
 
 # Python Code Smells
-
-Dealing with dictionaries
-
 
 <div class="abs-br m-6 text-xl">
   <button @click="$slidev.nav.openInEditor" title="Open in Editor" class="slidev-icon-btn">
@@ -40,25 +37,17 @@ The last comment block of each slide will be treated as slide notes. It will be 
 transition: fade-out
 ---
 
-# What is a dictionary?
-
-An inbuilt, iterable, mutable datatype in Python that allows programmers to map hashable values to arbitrary objects
-
-```python
-example_dictionary = {
-  "first_key": "first_value",
-  "second_key": "second_value"
-}
-```
-
-<br>
-<br>
-<br>
-<br>
-
 # What is a code smell?
 
 A surface-level indicator in the source code that suggests deeper problems in maintainability.
+
+
+---
+transition: fade-out
+layout: cover
+---
+
+# Part 1: Dictionaries
 
 
 ---
@@ -66,7 +55,7 @@ transition: slide-up
 level: 2
 ---
 
-# Code smell 1: Unintended side effects
+# #1: Unintended side effects
 
 A side effect occurs when an operation impacts something beyond its primary task
 
@@ -255,6 +244,10 @@ def main():
   return user_with_user_score
 ```
 ````
+<br>
+<br>
+
+<v-click>Takeaway: Beware of impure functions</v-click>
 
 
 ---
@@ -262,9 +255,7 @@ transition: slide-up
 level: 2
 ---
 
-# Code smell 2: Anti-pattern
-
-A common response to a recurring problem that is usually ineffective and risks being highly counterproductive
+# #2: Defining default values manually
 
 ````md magic-move {lines: true}
 ```python {*}
@@ -342,8 +333,6 @@ def get_user_with_user_statistics(user, user_statistics):
 ```
 ````
 
-
-
 ---
 transition: slide-up
 level: 2
@@ -358,113 +347,13 @@ Other languages deal with this problem through the use of:
  - Interfaces (Typescript)
  - Classes (Java)
 
-
----
-transition: slide-up
-level: 2
----
-
-# Dataclasses
-
-````md magic-move {lines: true}
-```python {*}
-poker_card = {
-  "value": 8,
-  "suit": "H"
-}
-
-class Card:
-  def __init__(self, value: int, suit: str):
-      self.value = value
-      self.suit = suit
-
-poker_card_class = Card(**poker_card)
-```
-```python {6-12}
-poker_card = {
-  "value": 8,
-  "suit": "H"
-}
-
-class Card:
-  def __init__(self, value: int, suit: str):
-      self.value = value
-      self.suit = suit
-
-poker_card_class = Card(**poker_card)
-# <__main__.Card object at 0x7f8ac6d117d0>
-```
-
-```python {6-15}
-poker_card = {
-  "value": 8,
-  "suit": "H"
-}
-
-class Card:
-  def __init__(self, value: int, suit: str):
-      self.value = value
-      self.suit = suit
-
-  def __str__(self) -> str:
-    return f"{self.value} of {self.suit}"
-
-poker_card_class = Card(**poker_card)
-# 8 of H
-```
-
-```python {6-20}
-poker_card = {
-  "value": 8,
-  "suit": "H"
-}
-
-class Card:
-  def __init__(self, value: int, suit: str):
-      self.value = value
-      self.suit = suit
-
-  def __str__(self) -> str:
-    return f"{self.value} of {self.suit}"
-
-  def __eq__(self, other) -> bool:
-    if self.value != other.value or self.suit != other.suit:
-        return False
-    return True
-
-poker_card_class = Card(**poker_card)
-# 8 of H
-```
-
-```python {1,9-12}
-from dataclasses import dataclass
-
-
-poker_card = {
-  "value": 8,
-  "suit": "H"
-}
-
-@dataclass
-class Card:
-  value: int
-  suit: str
-
-poker_card_class = Card(**poker_card)
-# Card(value=8, suit='H')
-```
-````
-
-
-
-
 ---
 level: 2
 ---
 
 # Advantages of using Dataclasses
 
-1. 🧩 **Type Safety (Limited)** - Leverages type annotations to ensure better code reliability and catch potential type-related errors during development.
+1. 🧩 **Schema Documentation and Type Safety (Limited)** - Leverages type annotations to ensure better code reliability and catch potential type-related errors during development.
 
 2. 🛠️ **Automatic Method Generation** - Automatically generates essential methods like __init__, __repr__, and __eq__, saving time and reducing boilerplate code.
 
@@ -477,9 +366,7 @@ transition: slide-up
 level: 2
 ---
 
-# Code smell 2: Anti-pattern - (Refactored)
-
-A common response to a recurring problem that is usually ineffective and risks being highly counterproductive
+# #2: Defining default values manually
 
 ````md magic-move {lines: true}
 ```python
@@ -538,6 +425,8 @@ def get_user_with_user_statistics(user: dict, user_statistics: dict) -> UserWith
   return UserWithUserStatistics(**user, **statistics)
 ```
 ````
+<br>
+<v-click>Takeaway: keep up to date with the standard library as much as possible</v-click>
 
 
 ---
@@ -951,7 +840,7 @@ Learn more: [Mermaid Diagrams](https://sli.dev/features/mermaid) and [PlantUML D
 ---
 foo: bar
 dragPos:
-  square: 0,-51,0,0
+  square: -56,0,0,0
 ---
 
 # Draggable Elements
