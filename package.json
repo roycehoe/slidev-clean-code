@@ -1,0 +1,18 @@
+{
+  "name": "slidev",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.32.0",
+    "@slidev/cli": "^51.0.2",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "rollup": "^4.32.0",
+    "vue": "^3.5.13"
+  }
+}
