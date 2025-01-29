@@ -122,394 +122,7 @@ transition: fade-out
 layout: cover
 ---
 
-# Part 1: Dictionaries
-
-
----
-transition: slide-up
-level: 2
----
-
-# #1: Unintended side effects
-
-A side effect occurs when an operation impacts something beyond its primary task
-
-````md magic-move {lines: true}
-```python {*|1-4|6-9|11-14|16-20|11-16}
-def get_user():
-  return {
-    user_id: 1
-  }
-
-def get_user_score():
-  return {
-    score: 30
-  }
-
-def get_user_with_user_score(user, user_score):
-  user = get_user()
-  user_score = get_user_score()
-  ...
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {11-13}
-def get_user():
-  return {
-    user_id: 1
-  }
-
-def get_user_score():
-  return {
-    score: 30
-  }
-
-def get_user_with_user_score(user, user_score):
-  user["score"] = user_score["score"]
-  return user
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {11-13}
-def get_user():
-  return {
-    user_id: 1
-  }
-
-def get_user_score():
-  return {
-    score: 30
-  }
-
-def get_user_with_user_score(user, user_score):
-  user["score"] = user_score if "score" in user_score else None
-  return user
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {11-13}
-def get_user():
-  return {
-    user_id: 1
-  }
-
-def get_user_score():
-  return {
-    score: 30
-  }
-
-def get_user_with_user_score(user, user_score):
-  user["score"] = user_score.get("score")
-  return user
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {11-13,16,18}
-def get_user():
-  return {
-    user_id: 1
-  }
-
-def get_user_score():
-  return {
-    score: 30
-  }
-
-def get_user_with_user_score(user, user_score):
-  user["score"] = user_score.get("score")
-  return user
-
-def main():
-  user = get_user() 
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {*}
-import copy
-
-
-def get_user_with_user_score(user, user_score):
-  user = get_user()
-  result = user.copy()
-
-  user_score = get_user_score()
-  result["score"] = user_score["score"]
-  return result
-  
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {*}
-def get_user_with_user_score(user, user_score):
-  result = {}
-  user = get_user()
-  user_score = get_user_score()
-
-  result["user_id"] = user["user_id"]
-  result["score"] = user_score["score"]
-  return result
-  
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {*}
-def get_user_with_user_score(user, user_score):
-  result = {}
-  user = get_user()
-  user_score = get_user_score()
-
-  return {
-    "user_id": user["user_id"]
-    "score": user_score["score"]
-  }
-  
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-
-```python {*}
-def get_user_with_user_score(user, user_score):
-  user = get_user()
-  user_score = get_user_score()
-  return {
-    **user,
-    **user_score
-  }
-
-def main():
-  user = get_user()
-  user_score = get_user_score()
-  user_with_user_score = get_user_with_user_score(user, user_score)
-  return user_with_user_score
-```
-````
-<br>
-<br>
-
-<v-click>Takeaway: Beware of impure functions</v-click>
-
-
----
-transition: slide-up
-level: 2
----
-
-# #2: Defining default values manually
-
-````md magic-move {lines: true}
-```python {*}
-def get_user():
-  return { user_id: 1 }
-
-def get_user_statistics():
-  # No statistics if user has not started playing at least 1 game
-  return {
-    "games_played": 7,
-    "score": 100,
-    "kill_streak": 2,
-    "total_enemies_killed": 58,
-    "favourite_gun": "M16"
-  }
-
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  ...
-
-```
-
-```python
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return {
-    "user_id": user["user_id"],
-    "games_played": (
-        statistics["games_played"] 
-        if "games_played" in statistics else 0
-    ),
-    "score": statistics["score"] 
-        if "score" in statistics else 0,
-    "kill_streak": statistics["kill_streak"] 
-        if "kill_streak" in statistics else 0,
-    "total_enemies_killed": (
-        statistics["total_enemies_killed"]
-        if "total_enemies_killed" in statistics else 0
-    ),
-    "faviourite_gun": (
-        statistics["faviourite_gun"] 
-        if "faviourite_gun" in statistics else None
-    ),
-  }
-```
-```python
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return {
-      "user_id": user["user_id"],
-      "games_played": statistics.get("games_played", 0),
-      "score": statistics.get("score", 0),
-      "kill_streak": statistics.get("kill_streak", 0),
-      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
-      "favourite_gun": statistics.get("favourite_gun", None)
-  }
-```
-```python {6-11}
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return {
-      "user_id": user["user_id"],
-      "games_played": statistics.get("games_played", 0),
-      "score": statistics.get("score", 0),
-      "kill_streak": statistics.get("kill_streak", 0),
-      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
-      "favourite_gun": statistics.get("favourite_gun", None)
-  }
-```
-````
-
----
-transition: slide-up
-level: 2
----
-
-# The problem with Dictionaries
-
-Dictionaries are opaque data structures!
-
-Other languages deal with this problem through the use of:
- - Structs (C, Golang)
- - Interfaces (Typescript)
- - Classes (Java)
-
----
-level: 2
----
-
-# Advantages of using Dataclasses
-
-1. 🧩 **Schema Documentation and Type Safety (Limited)** - Leverages type annotations to ensure better code reliability and catch potential type-related errors during development.
-
-2. 🛠️ **Automatic Method Generation** - Automatically generates essential methods like __init__, __repr__, and __eq__, saving time and reducing boilerplate code.
-
-3. ✍️ **Simplified Syntax** - With the @dataclass decorator, defining classes becomes cleaner and more concise compared to manually writing initialization and utility methods.
-
-4. 🔒 **Immutability** - By setting `frozen=True`, you can create immutable objects, ensuring the instance cannot be modified after creation.
-
----
-transition: slide-up
-level: 2
----
-
-# #2: Defining default values manually
-
-````md magic-move {lines: true}
-```python
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return {
-      "user_id": user["user_id"],
-      "games_played": statistics.get("games_played", 0),
-      "score": statistics.get("score", 0),
-      "kill_streak": statistics.get("kill_streak", 0),
-      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
-      "favourite_gun": statistics.get("favourite_gun", None)
-  }
-```
-```python
-from dataclasses import dataclass
-from typing import Optional
-
-@dataclass
-class UserWithUserStatistics:
-  user_id: int
-  games_played: int = 0
-  score: int = 0
-  kill_streak: int = 0
-  total_enemies_killed: int = 0
-  faviourite_gun: Optional[str] = None
-
-
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return UserWithUserStatistics(**user, **statistics)
-```
-
-```python
-from dataclasses import dataclass
-from typing import Optional
-
-@dataclass
-class UserWithUserStatistics:
-  user_id: int
-  games_played: int = 0
-  score: int = 0
-  kill_streak: int = 0
-  total_enemies_killed: int = 0
-  faviourite_gun: Optional[str] = None
-
-
-def get_user_with_user_statistics(user: dict, user_statistics: dict) -> UserWithUserStatistics:
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return UserWithUserStatistics(**user, **statistics)
-```
-````
-<br>
-<v-click>Takeaway: keep up to date with the standard library as much as possible</v-click>
-
-
----
-transition: fade-out
-layout: cover
----
-
-# Part 2: Refactoring
+# Part 3: Refactoring Exercise
 
 
 ---
@@ -1059,6 +672,397 @@ def get_gold_tier_user_ids(
 
 ```
 ````
+
+---
+transition: fade-out
+layout: cover
+---
+
+# Part 4: Refactoring and Beyond
+
+Dictionaries (a little rant)
+
+
+---
+transition: slide-up
+level: 2
+---
+
+# #1: Unintended side effects
+
+A side effect occurs when an operation impacts something beyond its primary task
+
+````md magic-move {lines: true}
+```python {*|1-4|6-9|11-14|16-20|11-16}
+def get_user():
+  return {
+    user_id: 1
+  }
+
+def get_user_score():
+  return {
+    score: 30
+  }
+
+def get_user_with_user_score(user, user_score):
+  user = get_user()
+  user_score = get_user_score()
+  ...
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {11-13}
+def get_user():
+  return {
+    user_id: 1
+  }
+
+def get_user_score():
+  return {
+    score: 30
+  }
+
+def get_user_with_user_score(user, user_score):
+  user["score"] = user_score["score"]
+  return user
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {11-13}
+def get_user():
+  return {
+    user_id: 1
+  }
+
+def get_user_score():
+  return {
+    score: 30
+  }
+
+def get_user_with_user_score(user, user_score):
+  user["score"] = user_score if "score" in user_score else None
+  return user
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {11-13}
+def get_user():
+  return {
+    user_id: 1
+  }
+
+def get_user_score():
+  return {
+    score: 30
+  }
+
+def get_user_with_user_score(user, user_score):
+  user["score"] = user_score.get("score")
+  return user
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {11-13,16,18}
+def get_user():
+  return {
+    user_id: 1
+  }
+
+def get_user_score():
+  return {
+    score: 30
+  }
+
+def get_user_with_user_score(user, user_score):
+  user["score"] = user_score.get("score")
+  return user
+
+def main():
+  user = get_user() 
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {*}
+import copy
+
+
+def get_user_with_user_score(user, user_score):
+  user = get_user()
+  result = user.copy()
+
+  user_score = get_user_score()
+  result["score"] = user_score["score"]
+  return result
+  
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {*}
+def get_user_with_user_score(user, user_score):
+  result = {}
+  user = get_user()
+  user_score = get_user_score()
+
+  result["user_id"] = user["user_id"]
+  result["score"] = user_score["score"]
+  return result
+  
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {*}
+def get_user_with_user_score(user, user_score):
+  result = {}
+  user = get_user()
+  user_score = get_user_score()
+
+  return {
+    "user_id": user["user_id"]
+    "score": user_score["score"]
+  }
+  
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+
+```python {*}
+def get_user_with_user_score(user, user_score):
+  user = get_user()
+  user_score = get_user_score()
+  return {
+    **user,
+    **user_score
+  }
+
+def main():
+  user = get_user()
+  user_score = get_user_score()
+  user_with_user_score = get_user_with_user_score(user, user_score)
+  return user_with_user_score
+```
+````
+<br>
+<br>
+
+<v-click>Takeaway: Beware of impure functions</v-click>
+
+
+---
+transition: slide-up
+level: 2
+---
+
+# #2: Defining default values manually
+
+````md magic-move {lines: true}
+```python {*}
+def get_user():
+  return { user_id: 1 }
+
+def get_user_statistics():
+  # No statistics if user has not started playing at least 1 game
+  return {
+    "games_played": 7,
+    "score": 100,
+    "kill_streak": 2,
+    "total_enemies_killed": 58,
+    "favourite_gun": "M16"
+  }
+
+def get_user_with_user_statistics(user, user_statistics):
+  # If no user statistics is available, return None for all values
+  ...
+
+```
+
+```python
+def get_user_with_user_statistics(user, user_statistics):
+  # If no user statistics is available, return None for all values
+  user = get_user()
+  statistics = get_user_statistics()
+  return {
+    "user_id": user["user_id"],
+    "games_played": (
+        statistics["games_played"] 
+        if "games_played" in statistics else 0
+    ),
+    "score": statistics["score"] 
+        if "score" in statistics else 0,
+    "kill_streak": statistics["kill_streak"] 
+        if "kill_streak" in statistics else 0,
+    "total_enemies_killed": (
+        statistics["total_enemies_killed"]
+        if "total_enemies_killed" in statistics else 0
+    ),
+    "faviourite_gun": (
+        statistics["faviourite_gun"] 
+        if "faviourite_gun" in statistics else None
+    ),
+  }
+```
+```python
+def get_user_with_user_statistics(user, user_statistics):
+  # If no user statistics is available, return None for all values
+  user = get_user()
+  statistics = get_user_statistics()
+  return {
+      "user_id": user["user_id"],
+      "games_played": statistics.get("games_played", 0),
+      "score": statistics.get("score", 0),
+      "kill_streak": statistics.get("kill_streak", 0),
+      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
+      "favourite_gun": statistics.get("favourite_gun", None)
+  }
+```
+```python {6-11}
+def get_user_with_user_statistics(user, user_statistics):
+  # If no user statistics is available, return None for all values
+  user = get_user()
+  statistics = get_user_statistics()
+  return {
+      "user_id": user["user_id"],
+      "games_played": statistics.get("games_played", 0),
+      "score": statistics.get("score", 0),
+      "kill_streak": statistics.get("kill_streak", 0),
+      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
+      "favourite_gun": statistics.get("favourite_gun", None)
+  }
+```
+````
+
+---
+transition: slide-up
+level: 2
+---
+
+# The problem with Dictionaries
+
+Dictionaries are opaque data structures!
+
+Other languages deal with this problem through the use of:
+ - Structs (C, Golang)
+ - Interfaces (Typescript)
+ - Classes (Java)
+
+---
+level: 2
+---
+
+# Advantages of using Dataclasses
+
+1. 🧩 **Schema Documentation and Type Safety (Limited)** - Leverages type annotations to ensure better code reliability and catch potential type-related errors during development.
+
+2. 🛠️ **Automatic Method Generation** - Automatically generates essential methods like __init__, __repr__, and __eq__, saving time and reducing boilerplate code.
+
+3. ✍️ **Simplified Syntax** - With the @dataclass decorator, defining classes becomes cleaner and more concise compared to manually writing initialization and utility methods.
+
+4. 🔒 **Immutability** - By setting `frozen=True`, you can create immutable objects, ensuring the instance cannot be modified after creation.
+
+---
+transition: slide-up
+level: 2
+---
+
+# #2: Defining default values manually
+
+````md magic-move {lines: true}
+```python
+def get_user_with_user_statistics(user, user_statistics):
+  # If no user statistics is available, return None for all values
+  user = get_user()
+  statistics = get_user_statistics()
+  return {
+      "user_id": user["user_id"],
+      "games_played": statistics.get("games_played", 0),
+      "score": statistics.get("score", 0),
+      "kill_streak": statistics.get("kill_streak", 0),
+      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
+      "favourite_gun": statistics.get("favourite_gun", None)
+  }
+```
+```python
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class UserWithUserStatistics:
+  user_id: int
+  games_played: int = 0
+  score: int = 0
+  kill_streak: int = 0
+  total_enemies_killed: int = 0
+  faviourite_gun: Optional[str] = None
+
+
+def get_user_with_user_statistics(user, user_statistics):
+  # If no user statistics is available, return None for all values
+  user = get_user()
+  statistics = get_user_statistics()
+  return UserWithUserStatistics(**user, **statistics)
+```
+
+```python
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class UserWithUserStatistics:
+  user_id: int
+  games_played: int = 0
+  score: int = 0
+  kill_streak: int = 0
+  total_enemies_killed: int = 0
+  faviourite_gun: Optional[str] = None
+
+
+def get_user_with_user_statistics(user: dict, user_statistics: dict) -> UserWithUserStatistics:
+  # If no user statistics is available, return None for all values
+  user = get_user()
+  statistics = get_user_statistics()
+  return UserWithUserStatistics(**user, **statistics)
+```
+````
+<br>
+<v-click>Takeaway: keep up to date with the standard library as much as possible</v-click>
+
+
+
 
 ---
 
