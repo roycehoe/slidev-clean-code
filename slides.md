@@ -34,12 +34,87 @@ The last comment block of each slide will be treated as slide notes. It will be 
 -->
 
 ---
+layout: cover
 transition: fade-out
+---
+
+# Part 1: Clean code
+
+---
+transition: fade-out
+level: 2
+---
+
+# What is clean code?
+
+ - ✨ Readable – Code should be easy to read and understand at a glance.
+ - 📏 Consistent – Follows a uniform style throughout the codebase.
+ - 🎯 Focused – Each function, class, and module should have a single responsibility.
+ - 🔍 Self-documenting – Uses meaningful names and clear logic, reducing the need for comments.
+ - 🏗️ Well-structured – Organized logically, with small, cohesive components.
+ - 📦 Minimal dependencies – Avoids unnecessary coupling between components.
+ - 🚀 Efficient – Written to perform well without premature optimization.
+ - 🛠️ Easily maintainable – Designed for future changes with minimal impact.
+ - ❌ Avoids duplication – Follows DRY (Don’t Repeat Yourself) principles.
+ - 🔄 Encapsulated – Keeps details hidden and exposes only what’s necessary.
+ - 🎭 Expresses intent clearly – Shows what it does, not just how it does it.
+ - 📜 Follows SOLID principles – Ensures flexibility and robustness in design.
+ - 🧩 Minimizes side effects – Keeps functions pure when possible.
+ - 🏎️ Simple over clever – Prioritizes clarity over smart but unreadable solutions.
+
+
+---
+transition: fade-out
+level: 2
+---
+
+# What is clean code?
+
+ - 🛠️ Easily maintainable – Designed for future changes with minimal impact.
+
+---
+layout: cover
+transition: fade-out
+---
+
+# Part 2: Code smell
+
+---
+transition: fade-out
+level: 2
 ---
 
 # What is a code smell?
 
 A surface-level indicator in the source code that suggests deeper problems in maintainability.
+
+
+
+<div v-click>
+```python
+    for fq in query_filters:
+        # NOTE: checking for nested filter received from FE
+        if "any" in fq:
+            fq = fq["any"]
+            if len(fq) < 1:
+                continue
+            else:
+                fq = fq[0]
+
+        solr_field = fe_solr_map[fq['field']]
+
+        if fq['type'] == 'range_field':
+            if fq['field'] == 'nested_properties.units':
+                print("ENTERED nested units field range:", fq['selectedRange'])
+                for filter_value in fq['selectedRange']:
+                    lower_selected_condition = "(value.upper_bound:[{0} TO *])".format(
+                        filter_value["from"])
+                    upper_selected_condition = "(value.lower_bound:[* TO {0}])".format(
+                        filter_value["to"])
+                    # NOTE: filter on props_.ppi.id intentionally as parent ppi ids may or may not have different units and will cause double counting if different units
+                    ppi_condition = "mprops_ppi.id:({0})".format(filter_value["value"])
+```
+</div>
 
 
 ---
@@ -430,195 +505,560 @@ def get_user_with_user_statistics(user: dict, user_statistics: dict) -> UserWith
 
 
 ---
-transition: slide-up
-level: 2
+transition: fade-out
+layout: cover
 ---
 
-# The problem with Dataclasses
-
-````md magic-move {lines: true}
-```python
-# No in-built data validation
-
-poker_card = {
-  "value": 8,
-  "suit": "H"
-}
-
-@dataclass
-class Card:
-  value: int
-  suit: str
-
-poker_card_class = Card(**poker_card)
-```
-```python
-# No in-built data validation
-from dataclasses import dataclass
-
-poker_card = {
-  "value": "8",
-  "suit": 39
-}
-
-class InvalidCardValueException(Exception):
-    pass
-
-class InvalidCardSuitException(Exception):
-    pass
-
-@dataclass
-class Card:
-  value: int
-  suit: str
-
-  def __post_init__(self):
-    if not isinstance(self.value, int):
-        raise InvalidCardValueException
-    if not isinstance(self.value, str):
-        raise InvalidCardSuitException
-```
-````
-
----
-transition: slide-up
-level: 2
----
-
-# Pydantic
-
-````md magic-move {lines: true}
-```python
-from dataclasses import dataclass
-
-poker_card = {
-  "value": "8",
-  "suit": 39
-}
-
-class InvalidCardValueException(Exception):
-    pass
-
-class InvalidCardSuitException(Exception):
-    pass
-
-@dataclass
-class Card:
-  value: int
-  suit: str
-
-  def __post_init__(self):
-    if not isinstance(self.value, int):
-        raise InvalidCardValueException
-    if not isinstance(self.value, str):
-        raise InvalidCardSuitException
-```
-```python
-from pydantic import BaseModel
-
-poker_card = {
-  "value": "8",
-  "suit": 39
-}
-
-class Card(BaseModel):
-  value: int
-  suit: str
-```
-````
-
----
-
-# Components
-
-<table>
-  <thead>
-      <tr>
-          <th>Feature</th>
-          <th>Dictionary</th>
-          <th>Class</th>
-          <th>Dataclass</th>
-          <th>Pydantic</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>Python standard library</td>
-          <td class="checkmark">✔</td>
-          <td class="checkmark">✔</td>
-          <td class="checkmark">✔ (v3.7)</td>
-          <td></td>
-      </tr>
-      <tr>
-          <td>Type checking</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="checkmark">✔</td>
-      </tr>
-      <tr>
-          <td>Default values</td>
-          <td></td>
-          <td class="checkmark">✔</td>
-          <td class="checkmark">✔</td>
-          <td class="checkmark">✔</td>
-      </tr>
-      <tr>
-          <td>Validation</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="checkmark">✔</td>
-      </tr>
-      <tr>
-          <td>Serialization support</td>
-          <td></td>
-          <td></td>
-          <td class="checkmark">✔</td>
-          <td class="checkmark">✔</td>
-      </tr>
-      <tr>
-          <td>Immutability support</td>
-          <td></td>
-          <td></td>
-          <td class="checkmark">✔</td>
-          <td class="checkmark">✔</td>
-      </tr>
-  </tbody>
-</table>
-
+# Part 2: Refactoring
 
 
 ---
 class: px-20
 ---
 
-# Themes
+# Refactoring exercise
 
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
+````md magic-move {lines: true}
+```python
+# Rule of thumb 1: Always type your code
 
-<div grid="~ cols-2 gap-2" m="t-2">
+def get_hof_and_gt_users(users):
+    hof_users = []
+    gt_users = []
 
-```yaml
----
-theme: default
----
+    for u in users:
+    # Optimization: only have to loop through all users once
+        if u.get("user_id") is not None:
+            uid = u.get("user_id")
+            stats = get_user_statistics(user_statistics)
+            ks = stats.get("kill_streak") 
+            if ks is not None 
+              if ks >= 100: # 100 is the criteion for hof
+                  hof_users.append(uid)
+              if ks >= 25: # 25 is the criteion for gt
+                  gt_users.append(uid)
+    return hof_users, gt_users
+```
+```python
+# Rule of thumb 1: Always type your code
+
+def get_hof_and_gt_users(users: list[dict]) -> tuple[list[int], list[int]]:
+    hof_users: list[int] = []
+    gt_users: list[int] = []
+
+    for u in users:
+    # Optimization: only have to loop through all users once
+        if u.get("user_id") is not None:
+            uid = u.get("user_id")
+            stats = get_user_statistics(user_statistics)
+            ks = stats.get("kill_streak") 
+            if ks is not None 
+              if ks >= 100: # 100 is the criteion for hof
+                  hof_users.append(uid)
+              if ks >= 25: # 25 is the criteion for gt
+                  gt_users.append(uid)
+    return hof_users, gt_users
+```
+```python
+# Rule of thumb 2: Avoid abbreviations
+
+def get_hof_and_gt_users(users: list[dict]) -> tuple[list[int], list[int]]:
+    hof_users: list[int] = []
+    gt_users: list[int] = []
+
+    for u in users:
+    # Optimization: only have to loop through all users once
+        if u.get("user_id") is not None:
+            uid = u.get("user_id")
+            stats = get_user_statistics(user_statistics)
+            ks = stats.get("kill_streak") 
+            if ks is not None 
+              if ks >= 100: # 100 is the criteion for hof
+                  hof_users.append(uid)
+              if ks >= 25: # 25 is the criteion for gt
+                  gt_users.append(uid)
+    return hof_users, gt_users
+```
+```python
+# Rule of thumb 2: Avoid abbreviations
+
+def get_hall_of_fame_users_and_gold_tier_users(users: list[dict]) -> tuple[list[int], list[int]]:
+    hall_of_fame_users: list[int] = []
+    gold_tier_users: list[int] = []
+
+    for user in users:
+    # Optimization: only have to loop through all users once
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None 
+              if kill_streak >= 100: 
+                  # 100 is the criteion for hall of fame
+                  hall_of_fame_users.append(user_id)
+              if kill_streak >= 25:
+                  # 25 is the criteion for gold tier
+                  gold_tier_users.append(user_id)
+    return hall_of_fame_users, gold_tier_users
 ```
 
-```yaml
----
-theme: seriph
----
+```python
+# Rule of thumb 3: If your function contains the word "and", or your function returns a tuple,  
+# your function is likely violating the single responsibility principle. 
+# Break your function up into many functions
+
+def get_hall_of_fame_users_and_gold_tier_users(users: list[dict]) -> tuple[list[int], list[int]]:
+    hall_of_fame_users: list[int] = []
+    gold_tier_users: list[int] = []
+
+    for user in users:
+    # Optimization: only have to loop through all users once
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None 
+                if kill_streak >= 100: 
+                    # 100 is the criteion for hall of fame
+                    hall_of_fame_users.append(user_id)
+                if kill_streak >= 25:
+                    # 25 is the criteion for gold tier
+                    gold_tier_users.append(user_id)
+    return hall_of_fame_users, gold_tier_users
 ```
 
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
+```python
+# Rule of thumb 3: If your function contains the word "and", or your function returns a tuple,  
+# your function is likely violating the single responsibility principle. 
+# Break your function up into many functions
 
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
+def get_hall_of_fame_users(users: list[dict]) -> list[int]:
+    hall_of_fame_users: list[int] = []
 
-</div>
+    for user in users:
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None 
+                if kill_streak >= 100: 
+                    # 100 is the criteion for hall of fame
+                    hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
 
-Read more about [How to use a theme](https://sli.dev/guide/theme-addon#use-theme) and
-check out the [Awesome Themes Gallery](https://sli.dev/resources/theme-gallery).
+def get_gold_tier_users(users: list[dict]) -> list[int]:
+  ...
+```
+
+```python
+# Rule of thumb 4: Magic numbers can typically be refactored into constants
+
+def get_hall_of_fame_users(users: list[dict]) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None 
+                if kill_streak >= 100: 
+                    # 100 is the criteion for hall of fame
+                    hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+
+def get_gold_tier_users(users: list[dict]) -> list[int]:
+  ...
+```
+
+```python
+# Rule of thumb 4: Magic numbers can typically be refactored into constants
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None:
+                if kill_streak >= kill_streak_criterion: 
+                    # 100 is the criteion for hall of fame
+                    hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+
+def get_gold_tier_users(users: list[dict]) -> list[int]:
+  ...
+```
+
+```python
+# Rule of thumb 5: As far as possible, your code should be self-commenting
+# Remove unneccesary comments
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None:
+                if kill_streak >= kill_streak_criterion: 
+                    # 100 is the criteion for hall of fame
+                    hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+
+def get_gold_tier_users(users: list[dict]) -> list[int]:
+  ...
+```
+```python
+# Rule of thumb 6: As far as possible, your code should be self-commenting
+# Remove unneccesary comments
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None:
+                if kill_streak >= kill_streak_criterion: 
+                    hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+
+def get_gold_tier_users(users: list[dict], kill_streak_criterion: int) -> list[int]:
+  ...
+```
+
+```python
+# Rule of thumb 7: Avoid nesting code by using early termination
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is not None:
+            user_id = user.get("user_id")
+            user_statistics = get_user_statistics(user_statistics)
+            kill_streak = user_statistics.get("kill_streak") 
+            if kill_streak is not None:
+                if kill_streak >= kill_streak_criterion: 
+                    hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+```
+
+```python
+# Rule of thumb 7: Avoid nesting code by using early termination
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is None:
+            continue
+        user_id = user.get("user_id")
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+        hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+```
+
+```python
+# Rule of thumb 8: Use whitespace to group logical statements together to improve readability
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is None:
+            continue
+        user_id = user.get("user_id")
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+        hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+```
+
+```python
+# Rule of thumb 8: Use whitespace to group logical statements together to improve readability
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is None:
+            continue
+        user_id = user.get("user_id")
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+
+        hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+```
+
+```python
+# Rule of thumb 9: Ensure that your function does what it says it does
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is None:
+            continue
+        user_id = user.get("user_id")
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+
+        hall_of_fame_users.append(user_id)
+    return hall_of_fame_users
+```
+
+```python
+# Rule of thumb 9: Ensure that your function does what it says it does
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is None:
+            continue
+        user_id = user.get("user_id")
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+
+        hall_of_fame_user_ids.append(user_id)
+    return hall_of_fame_user_ids
+```
+
+```python
+# Rule of thumb 10: Simplify
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if user.get("user_id") is None:
+            continue
+        user_id = user.get("user_id")
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+
+        hall_of_fame_user_ids.append(user_id)
+    return hall_of_fame_user_ids
+```
+
+```python
+# Rule of thumb 10: Simplify
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        user_id = user.get("user_id")
+        if user_id is None:
+            continue
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+
+        hall_of_fame_user_ids.append(user_id)
+    return hall_of_fame_user_ids
+```
+
+```python
+# Rule of thumb 11: Reuse code
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        user_id = user.get("user_id")
+        if user_id is None:
+            continue
+        user_statistics = get_user_statistics(user_statistics)
+        kill_streak = user_statistics.get("kill_streak") 
+
+        if kill_streak is None:
+            continue
+        if kill_streak <= kill_streak_criterion:
+            continue
+
+        hall_of_fame_user_ids.append(user_id)
+    return hall_of_fame_user_ids
+```
+
+```python
+# Rule of thumb 11: Reuse code
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+
+def _is_user_within_kill_streak(user: dict, kill_streak_criterion: int) -> bool:
+    user_id = user.get("user_id")
+    if user_id is None:
+        return False
+
+    user_statistics = get_user_statistics(user_statistics)
+    kill_streak = user_statistics.get("kill_streak") 
+
+    if kill_streak is None:
+        return False
+    if kill_streak <= kill_streak_criterion:
+        return False
+
+    return True
+
+def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    ...
+
+```
+
+```python
+# Rule of thumb 11: Reuse code
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+
+def _is_user_within_kill_streak(user: dict, kill_streak_criterion: int) -> bool:
+    ...
+
+def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    hall_of_fame_users: list[int] = []
+
+    for user in users:
+        if not _is_user_within_kill_streak(users, kill_streak_criterion):
+            continue
+        user_id = user.get("user_id")
+        hall_of_fame_user_ids.append(user_id)
+    return hall_of_fame_user_ids
+
+```
+
+
+```python
+# Rule of thumb 11: Reuse code
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+GOLD_TIER_KILL_STREAK_CRITERION = 100
+
+def _is_user_within_kill_streak(user: dict, kill_streak_criterion: int) -> bool:
+    ...
+
+def get_hall_of_fame_user_ids(users: dict, kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    ...
+
+def get_gold_tier_user_ids(users: dict, kill_streak_criterion: int = GOLD_TIER_KILL_STREAK_CRITERION) -> list[int]:
+    ...
+```
+
+```python
+# Rule of thumb 12: Use an autoformatter
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+GOLD_TIER_KILL_STREAK_CRITERION = 100
+
+def _is_user_within_kill_streak(user: dict, kill_streak_criterion: int) -> bool:
+    ...
+
+def get_hall_of_fame_user_ids(users: dict, kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION) -> list[int]:
+    ...
+
+def get_gold_tier_user_ids(users: dict, kill_streak_criterion: int = GOLD_TIER_KILL_STREAK_CRITERION) -> list[int]:
+    ...
+```
+
+```python
+# Rule of thumb 12: Use an autoformatter
+
+HALL_OF_FAME_KILL_STREAK_CRITERION = 100
+GOLD_TIER_KILL_STREAK_CRITERION = 100
+
+
+def _is_user_within_kill_streak(user: dict, kill_streak_criterion: int) -> bool: ...
+
+
+def get_hall_of_fame_user_ids(
+    users: dict, kill_streak_criterion: int = HALL_OF_FAME_KILL_STREAK_CRITERION
+) -> list[int]: ...
+
+
+def get_gold_tier_user_ids(
+    users: dict, kill_streak_criterion: int = GOLD_TIER_KILL_STREAK_CRITERION
+) -> list[int]: ...
+
+```
+````
 
 ---
 
@@ -904,13 +1344,8 @@ const arr = ref(emptyArray(10))
 
 Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
 
-```ts {monaco-run}
-import { version } from 'vue'
-import { emptyArray, sayHello } from './external'
-
-sayHello()
-console.log(`vue ${version}`)
-console.log(emptyArray<number>(10).reduce(fib => [...fib, fib.at(-1)! + fib.at(-2)!], [1, 1]))
+```py {monaco-run}
+print("hello world")
 ```
 
 ---
