@@ -143,7 +143,7 @@ def get_hof_and_gt_users(users):
     # Optimization: only have to loop through all users once
         if u.get("user_id") is not None:
             uid = u.get("user_id")
-            stats = get_user_statistics(user_statistics)
+            stats = get_user_statistics(uid)
             ks = stats.get("kill_streak") 
             if ks is not None 
               if ks >= 100: # 100 is the criteion for hof
@@ -163,7 +163,7 @@ def get_hof_and_gt_users(users: list[dict]) -> tuple[list[int], list[int]]:
     # Optimization: only have to loop through all users once
         if u.get("user_id") is not None:
             uid = u.get("user_id")
-            stats = get_user_statistics(user_statistics)
+            stats = get_user_statistics(uid)
             ks = stats.get("kill_streak") 
             if ks is not None 
               if ks >= 100: # 100 is the criteion for hof
@@ -183,7 +183,7 @@ def get_hof_and_gt_users(users: list[dict]) -> tuple[list[int], list[int]]:
     # Optimization: only have to loop through all users once
         if u.get("user_id") is not None:
             uid = u.get("user_id")
-            stats = get_user_statistics(user_statistics)
+            stats = get_user_statistics(uid)
             ks = stats.get("kill_streak") 
             if ks is not None 
               if ks >= 100: # 100 is the criteion for hof
@@ -203,7 +203,7 @@ def get_hall_of_fame_users_and_gold_tier_users(users: list[dict]) -> tuple[list[
     # Optimization: only have to loop through all users once
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None 
               if kill_streak >= 100: 
@@ -228,7 +228,7 @@ def get_hall_of_fame_users_and_gold_tier_users(users: list[dict]) -> tuple[list[
     # Optimization: only have to loop through all users once
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None 
                 if kill_streak >= 100: 
@@ -251,7 +251,7 @@ def get_hall_of_fame_users(users: list[dict]) -> list[int]:
     for user in users:
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None 
                 if kill_streak >= 100: 
@@ -272,7 +272,7 @@ def get_hall_of_fame_users(users: list[dict]) -> list[int]:
     for user in users:
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None 
                 if kill_streak >= 100: 
@@ -280,8 +280,7 @@ def get_hall_of_fame_users(users: list[dict]) -> list[int]:
                     hall_of_fame_users.append(user_id)
     return hall_of_fame_users
 
-def get_gold_tier_users(users: list[dict]) -> list[int]:
-  ...
+def get_gold_tier_users(users: list[dict], kill_streak_criterion: int) -> list[int]:
 ```
 
 ```python
@@ -296,7 +295,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
     for user in users:
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None:
                 if kill_streak >= kill_streak_criterion: 
@@ -304,8 +303,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
                     hall_of_fame_users.append(user_id)
     return hall_of_fame_users
 
-def get_gold_tier_users(users: list[dict]) -> list[int]:
-  ...
+def get_gold_tier_users(users: list[dict], kill_streak_criterion: int) -> list[int]:
 ```
 
 ```python
@@ -321,7 +319,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
     for user in users:
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None:
                 if kill_streak >= kill_streak_criterion: 
@@ -329,8 +327,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
                     hall_of_fame_users.append(user_id)
     return hall_of_fame_users
 
-def get_gold_tier_users(users: list[dict]) -> list[int]:
-  ...
+def get_gold_tier_users(users: list[dict], kill_streak_criterion: int) -> list[int]:
 ```
 ```python
 # Rule of thumb 6: As far as possible, your code should be self-commenting
@@ -345,7 +342,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
     for user in users:
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None:
                 if kill_streak >= kill_streak_criterion: 
@@ -368,7 +365,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
     for user in users:
         if user.get("user_id") is not None:
             user_id = user.get("user_id")
-            user_statistics = get_user_statistics(user_statistics)
+            user_statistics = get_user_statistics(user_id)
             kill_streak = user_statistics.get("kill_streak") 
             if kill_streak is not None:
                 if kill_streak >= kill_streak_criterion: 
@@ -389,7 +386,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
         if user.get("user_id") is None:
             continue
         user_id = user.get("user_id")
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
         if kill_streak is None:
             continue
@@ -412,7 +409,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
         if user.get("user_id") is None:
             continue
         user_id = user.get("user_id")
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
         if kill_streak is None:
             continue
@@ -435,7 +432,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
         if user.get("user_id") is None:
             continue
         user_id = user.get("user_id")
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
 
         if kill_streak is None:
@@ -460,7 +457,7 @@ def get_hall_of_fame_users(users: list[dict], kill_streak_criterion: int = HALL_
         if user.get("user_id") is None:
             continue
         user_id = user.get("user_id")
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
 
         if kill_streak is None:
@@ -485,7 +482,7 @@ def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HA
         if user.get("user_id") is None:
             continue
         user_id = user.get("user_id")
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
 
         if kill_streak is None:
@@ -510,7 +507,7 @@ def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HA
         if user.get("user_id") is None:
             continue
         user_id = user.get("user_id")
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
 
         if kill_streak is None:
@@ -535,7 +532,7 @@ def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HA
         user_id = user.get("user_id")
         if user_id is None:
             continue
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
 
         if kill_streak is None:
@@ -560,7 +557,7 @@ def get_hall_of_fame_user_ids(users: list[dict], kill_streak_criterion: int = HA
         user_id = user.get("user_id")
         if user_id is None:
             continue
-        user_statistics = get_user_statistics(user_statistics)
+        user_statistics = get_user_statistics(user_id)
         kill_streak = user_statistics.get("kill_streak") 
 
         if kill_streak is None:
@@ -583,7 +580,7 @@ def _is_user_within_kill_streak(user: dict, kill_streak_criterion: int) -> bool:
     if user_id is None:
         return False
 
-    user_statistics = get_user_statistics(user_statistics)
+    user_statistics = get_user_statistics(user_id)
     kill_streak = user_statistics.get("kill_streak") 
 
     if kill_streak is None:
@@ -682,7 +679,7 @@ layout: cover
 
 # Part 4: Refactoring and Beyond
 
-Dictionaries (a little rant)
+Dictionaries
 
 
 ---
@@ -703,8 +700,6 @@ def get_user_score() -> dict:
     return { score: 30 }
 
 def get_user_with_user_score(user: dict, user_score: dict) -> dict:
-    user = get_user()
-    user_score = get_user_score()
     ...
 
 def main():
@@ -740,7 +735,7 @@ def get_user_score() -> dict:
     return { score: 30 }
 
 def get_user_with_user_score(user: dict, user_score: dict) -> dict:
-    user["score"] = user_score if "score" in user_score else None
+    user["score"] = user_score["score"] if "score" in user_score else None
     return user
 
 def main():
@@ -791,10 +786,8 @@ import copy
 
 
 def get_user_with_user_score(user: dict, user_score: dict) -> dict:
-  user = get_user()
   result = user.copy()
 
-  user_score = get_user_score()
   result["score"] = user_score["score"]
   return result
   
@@ -809,8 +802,6 @@ def main() -> dict:
 ```python {*}
 def get_user_with_user_score(user: dict, user_score: dict) -> dict:
     result = {}
-    user = get_user()
-    user_score = get_user_score()
 
     result["user_id"] = user["user_id"]
     result["score"] = user_score["score"]
@@ -826,10 +817,6 @@ def main() -> dict:
 
 ```python {*}
 def get_user_with_user_score(user: dict, user_score: dict) -> dict:
-    result = {}
-    user = get_user()
-    user_score = get_user_score()
-
     return {
         "user_id": user["user_id"],
         "score": user_score["score"]
@@ -845,8 +832,6 @@ def main() -> dict:
 
 ```python {*}
 def get_user_with_user_score(user: dict, user_score: dict) -> dict:
-    user = get_user()
-    user_score = get_user_score()
     return {
       **user,
       **user_score
@@ -878,7 +863,7 @@ def get_user():
   return { user_id: 1 }
 
 def get_user_statistics():
-  # No statistics if user has not started playing at least 1 game
+  # Returns an empty dictionary if user has not started playing at least 1 game
   return {
     "games_played": 7,
     "score": 100,
@@ -887,15 +872,13 @@ def get_user_statistics():
     "favourite_gun": "M16"
   }
 
-def get_user_with_user_statistics(user, user_statistics):
+def get_user_with_user_statistics(user, statistics):
   ...
 
 ```
 
 ```python
-def get_user_with_user_statistics(user, user_statistics):
-  user = get_user()
-  statistics = get_user_statistics()
+def get_user_with_user_statistics(user, statistics):
   return {
     "user_id": user["user_id"],
     "games_played": (
@@ -917,10 +900,7 @@ def get_user_with_user_statistics(user, user_statistics):
   }
 ```
 ```python
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
+def get_user_with_user_statistics(user, statistics):
   return {
       "user_id": user["user_id"],
       "games_played": statistics.get("games_played", 0),
@@ -930,11 +910,8 @@ def get_user_with_user_statistics(user, user_statistics):
       "favourite_gun": statistics.get("favourite_gun", None)
   }
 ```
-```python {6-11}
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
+```python {3-8}
+def get_user_with_user_statistics(user, statistics):
   return {
       "user_id": user["user_id"],
       "games_played": statistics.get("games_played", 0),
@@ -965,9 +942,69 @@ transition: slide-left
 level: 2
 ---
 
+# Inbuilt Class
+
+````md magic-move {lines: true}
+```python
+poker_card = {
+    "value": 8,
+    "suit": "H"
+}
+
+class Card:
+    def __init__(self, value: int, suit: int):
+        value = self.value
+        suit = self.suit
+
+poker_card_class = Card(**poker_card)
+```
+
+```python
+poker_card = {
+    "value": 8,
+    "suit": "H"
+}
+
+class Card:
+    def __init__(self, value: int, suit: int):
+        value = self.value
+        suit = self.suit
+
+    def __str__(self):
+        return f'{self.value} of {self.suit}'
+
+poker_card_class = Card(**poker_card)
+```
+```python
+poker_card = {
+    "value": 8,
+    "suit": "H"
+}
+
+class Card:
+    def __init__(self, value: int, suit: int):
+        value = self.value
+        suit = self.suit
+
+    def __str__(self):
+        return f'{self.value} of {self.suit}'
+
+    def __eq__(self, other):
+        return self.value == other.value and self.suit == other.suit
+
+poker_card_class = Card(**poker_card)
+```
+````
+
+
+---
+transition: slide-left
+level: 2
+---
+
 # Advantages of using Dataclasses
 
-1. 🧩 **Schema Documentation and Type Safety (Limited)** - Leverages type annotations to ensure better code reliability and catch potential type-related errors during development.
+1. 🧩 **Schema Documentation and Type Annotations (Limited)** - Leverages type annotations to ensure better code reliability and catch potential type-related errors during development.
 
 2. 🛠️ **Automatic Method Generation** - Automatically generates essential methods like __init__, __repr__, and __eq__, saving time and reducing boilerplate code.
 
@@ -980,84 +1017,31 @@ transition: slide-left
 level: 2
 ---
 
-# #2: Defining default values manually
+# Dataclasses
 
 ````md magic-move {lines: true}
 ```python
-def get_user_with_user_statistics(user, user_statistics):
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return {
-      "user_id": user["user_id"],
-      "games_played": statistics.get("games_played", 0),
-      "score": statistics.get("score", 0),
-      "kill_streak": statistics.get("kill_streak", 0),
-      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
-      "favourite_gun": statistics.get("favourite_gun", None)
-  }
+poker_card = {
+    "value": 8,
+    "suit": "H"
+}
+
+class Card:
+    def __init__(self, value: int, suit: int):
+        value = self.value
+        suit = self.suit
+
+    def __str__(self):
+        return f'{self.value} of {self.suit}'
+
+    def __eq__(self, other):
+        return self.value == other.value and self.suit == other.suit
+
+poker_card_class = Card(**poker_card)
 ```
-
-```python
-from dataclasses import dataclass
-from typing import Optional
-
-@dataclass
-class UserWithUserStatistics:
-  user_id: int
-  games_played: int = 0
-  score: int = 0
-  kill_streak: int = 0
-  total_enemies_killed: int = 0
-  faviourite_gun: Optional[str] = None
-
-
-def get_user_with_user_statistics(user: dict, user_statistics: dict) -> UserWithUserStatistics:
-  # If no user statistics is available, return None for all values
-  user = get_user()
-  statistics = get_user_statistics()
-  return UserWithUserStatistics(**user, **statistics)
-```
-
-```python
-from dataclasses import dataclass
-from typing import Optional
-
-@dataclass
-class User:
-    user_id: int
-
-@dataclass
-class UserStatistics:
-    games_played: int = 0
-    score: int = 0
-    kill_streak: int = 0
-    total_enemies_killed: int = 0
-    faviourite_gun: Optional[str] = None
-
-@dataclass
-class UserWithUserStatistics(User, UserStatistics):
-    pass
-
-def get_user_with_user_statistics(user: User, user_statistics: UserStatistics) -> UserWithUserStatistics:
-    ...
-```
-````
-<br>
-<v-click>Takeaway: keep up to date with the standard library as much as possible</v-click>
-
-
-
----
-transition: slide-left
-level: 2
----
-
-# The problem with Dataclasses
-
-````md magic-move {lines: true}
 ```python
 # No in-built data validation
+from dataclasses import dataclass
 
 poker_card = {
     "value": 8,
@@ -1073,6 +1057,7 @@ poker_card_class = Card(**poker_card)
 ```
 ```python
 # No in-built data validation
+from dataclasses import dataclass
 
 poker_card = {
     "value": "8",
@@ -1158,6 +1143,8 @@ poker_card = {
 class Card(BaseModel):
     value: int
     suit: str
+
+poker_card_class = Card(**poker_card)
 ```
 ````
 
@@ -1185,6 +1172,13 @@ level: 2
           <td class="checkmark">✔</td>
           <td class="checkmark">✔ (v3.7)</td>
           <td></td>
+      </tr>
+      <tr>
+          <td>Type hinting</td>
+          <td></td>
+          <td class="checkmark">✔ (Optional)</td>
+          <td class="checkmark">✔</td>
+          <td class="checkmark">✔</td>
       </tr>
       <tr>
           <td>Type checking</td>
@@ -1228,6 +1222,25 @@ level: 2
 transition: slide-left
 level: 2
 ---
+
+# #2: Defining default values manually
+
+```python
+def get_user_with_user_statistics(user, statistics):
+  return {
+      "user_id": user["user_id"],
+      "games_played": statistics.get("games_played", 0),
+      "score": statistics.get("score", 0),
+      "kill_streak": statistics.get("kill_streak", 0),
+      "total_enemies_killed": statistics.get("total_enemies_killed", 0),
+      "favourite_gun": statistics.get("favourite_gun", None)
+  }
+```
+
+---
+transition: slide-left
+level: 2
+---
 # Decision tree
 
 ```mermaid {theme: 'neutral'}
@@ -1243,6 +1256,7 @@ graph LR;
     G -- Yes --> I[Python Class]
     G -- No --> J[Dataclass]
 ```
+
 
 ---
 transition: slide-left
